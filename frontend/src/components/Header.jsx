@@ -3,11 +3,34 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import MessageIcon from '@mui/icons-material/Message';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Select from 'react-select'
 import React from 'react'
+import { BASE_URL } from '../helper/Helper';
+import axios from 'axios';
 
 export default function Header() {
+      const [locale,setLocale] = useState([]);
+
+  useEffect(() => {
+    try {
+      axios.get(`${BASE_URL}/api/i18n/locales`)
+        .then(function (response) {
+          // handle success
+          console.log(response?.data);
+          setLocale(response?.data);
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        })
+        .finally(function () {
+          // always executed
+        });
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
 
     const [options, setOptions] = useState([
         { value: 'detect location', label: 'detect location' },
@@ -85,8 +108,28 @@ export default function Header() {
                         <Select options={business} />
                     </div>
                 </div>
-                <Button variant="Text" sx={{ color: "blue", fontSize: "10px", marginLeft: 6 }}>EN<KeyboardArrowDownIcon /></Button>
-                <Button variant="Text" sx={{ color: "black", fontSize: "10px" }}>We Are Hiring</Button>
+                <div className="row mt-4">
+        <div className="col-4 offset-3">
+          <div className="dropdown">
+            <button className="btn  dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+              EN
+            </button>
+            <ul className="dropdown-menu">
+              {
+                locale.length > 0 &&
+                locale.map((cv,idx,arr)=>{
+                    return(
+                        <li key={idx}><a className="dropdown-item active" href="#">{cv.name}</a></li>
+                    )
+                })
+              }
+              
+            </ul>
+          </div>
+
+        </div>
+      </div>
+                <Button variant="Text" sx={{ color: "black", fontSize: "10px",marginLeft: 3 }}>We Are Hiring</Button>
                 <Button variant="Text" sx={{ color: "black", fontSize: "10px" }}>Investor Relations</Button>
                 <Button variant="Text" sx={{ color: "black", fontSize: "10px" }}><MessageIcon />Leads</Button>
                 <Button variant="Text" sx={{ color: "black", fontSize: "10px" }}><CampaignIcon />Advertise</Button>
